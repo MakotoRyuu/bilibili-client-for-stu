@@ -5,6 +5,7 @@ import SwiftUI
 struct RootView: View {
     @State private var session = SessionStore()
     @State private var favorites = FavoritesStore()
+    @State private var theme = ThemeStore()
     @State private var selection: SidebarItem = .favorites
     @State private var drawerOpen = false
     @State private var showLogin = false
@@ -33,6 +34,9 @@ struct RootView: View {
         }
         .environment(session)
         .environment(favorites)
+        .environment(theme)
+        .preferredColorScheme(theme.appearance.colorScheme)
+        .animation(.easeInOut(duration: 0.2), value: theme.appearance)
         .task { await session.refresh() }
         .onChange(of: scenePhase) { _, phase in
             // 回到前台时重新校验会话，及时发现服务端已失效的情况。
@@ -119,6 +123,7 @@ struct RootView: View {
 /// 抽屉内的菜单内容。
 private struct DrawerMenu: View {
     @Environment(SessionStore.self) private var session
+    @Environment(ThemeStore.self) private var theme
     @Binding var selection: SidebarItem
     @Binding var isOpen: Bool
 
@@ -152,7 +157,37 @@ private struct DrawerMenu: View {
             }
 
             Spacer()
+
+            appearanceToggle
+                .padding(.horizontal, 12)
+                .padding(.bottom, 24)
         }
+    }
+
+    /// 底部外观切换：点击在 浅色 / 深色 / 跟随系统 间循环。
+    private var appearanceToggle: some View {
+        Button {
+            theme.cycle()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: theme.appearance.systemImage)
+                    .frame(width: 24)
+                Text("外观")
+                Spacer()
+                Text(theme.appearance.title)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .foregroundStyle(.primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .background(
+                Color.primary.opacity(0.06),
+                in: RoundedRectangle(cornerRadius: 10)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     private var header: some View {
