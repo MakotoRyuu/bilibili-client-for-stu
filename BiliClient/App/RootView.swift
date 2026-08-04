@@ -7,27 +7,103 @@ struct RootView: View {
     @State private var favorites = FavoritesStore()
     @State private var selection: SidebarItem = .favorites
     @State private var drawerOpen = false
+    @State private var showLogin = false
+    @State private var warningDismissed = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         SideDrawer(isOpen: $drawerOpen) {
             DrawerMenu(selection: $selection, isOpen: $drawerOpen)
         } content: {
             NavigationStack {
-                detail
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                drawerOpen.toggle()
-                            } label: {
-                                Image(systemName: "line.3.horizontal")
-                            }
+                VStack(spacing: 0) {
+                    sessionBanner
+                    detail
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            drawerOpen.toggle()
+                        } label: {
+                            Image(systemName: "line.3.horizontal")
                         }
                     }
+                }
             }
         }
         .environment(session)
         .environment(favorites)
         .task { await session.refresh() }
+        .onChange(of: scenePhase) { _, phase in
+            // 回到前台时重新校验会话，及时发现服务端已失效的情况。
+            if phase == .active {
+                Task { await session.refresh() }
+            }
+        }
+        .onChange(of: session.state) { _, newState in
+            if newState == .loggedIn { warningDismissed = false }
+        }
+        .sheet(isPresented: $showLogin) {
+            QRLoginView()
+        }
+    }
+
+    /// 登录过期 / 即将过期的顶部横幅。
+    @ViewBuilder
+    private var sessionBanner: some View {
+        if session.state == .expired {
+            banner(
+                text: "登录已过期，点此重新登录",
+                systemImage: "exclamationmark.triangle.fill",
+                tint: .red
+            ) {
+                showLogin = true
+            }
+        } else if let days = session.expiryWarningDays, !warningDismissed {
+            banner(
+                text: days <= 0 ? "登录即将过期，建议重新登录"
+                                : "登录将在 \(days) 天后过期，建议重新登录",
+                systemImage: "clock.badge.exclamationmark",
+                tint: .orange,
+                onClose: { warningDismissed = true }
+            ) {
+                showLogin = true
+            }
+        }
+    }
+
+    private func banner(
+        text: String,
+        systemImage: String,
+        tint: Color,
+        onClose: (() -> Void)? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        HStack(spacing: 10) {
+            Button(action: action) {
+                HStack(spacing: 10) {
+                    Image(systemName: systemImage)
+                    Text(text).font(.subheadline.weight(.medium))
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            if let onClose {
+                Button(action: onClose) {
+                    Image(systemName: "xmark")
+                        .font(.caption.weight(.bold))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity)
+        .background(tint)
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 
     @ViewBuilder

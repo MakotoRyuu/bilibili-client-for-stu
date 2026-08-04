@@ -25,6 +25,14 @@ struct BiliResponse<T: Decodable>: Decodable {
     let data: T?
 }
 
+extension Notification.Name {
+    /// 检测到登录会话失效（业务码 -101 等）时广播，供会话层切到「已过期」。
+    static let biliSessionInvalidated = Notification.Name("bili.session.invalidated")
+}
+
+/// B站表示「未登录/账号异常」的业务码。命中即认为当前 Cookie 已失效。
+private let notLoggedInCodes: Set<Int> = [-101, -2]
+
 /// 统一网络客户端：注入 Referer/UA/Cookie，处理 WBI 签名与业务错误码。
 final class APIClient {
     static let shared = APIClient()
@@ -69,6 +77,10 @@ final class APIClient {
         let request = makeRequest(url: url)
         let wrapped: BiliResponse<T> = try await send(request)
         guard wrapped.code == 0, let data = wrapped.data else {
+            // 已登录状态下遇到未登录业务码 → 说明 Cookie 在服务端已失效，通知会话层。
+            if notLoggedInCodes.contains(wrapped.code), cookies.isLoggedIn {
+                NotificationCenter.default.post(name: .biliSessionInvalidated, object: nil)
+            }
             throw APIError.biz(code: wrapped.code, message: wrapped.message)
         }
         return data

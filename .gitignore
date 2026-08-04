@@ -4,6 +4,7 @@ CLAUDE.md
 
 # Xcode
 build/
+build_mac/
 *.xcuserstate
 *.xcscmblueprint
 DerivedData/
@@ -11,6 +12,8 @@ DerivedData/
 *.ipa
 *.dSYM.zip
 *.dSYM
+*.o
+*.app
 
 # Swift Package Manager
 .build/

@@ -38,6 +38,3 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.makoto.biliclient.BiliClient
         GENERATE_INFOPLIST_FILE: NO
-        # Mac Catalyst 关闭；改用「Designed for iPad」在 Apple Silicon Mac 原生运行。
-        SUPPORTS_MACCATALYST: NO
-        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: YES

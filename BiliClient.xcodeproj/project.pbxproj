@@ -58,7 +58,7 @@
 		8A08B715A9DEA4A8D8901DE1 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		8E21D4166FCF9EB0503275A3 /* QRLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRLoginView.swift; sourceTree = "<group>"; };
 		8EDD4CE3672C47B5931DC17A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
-		B0A6B81F9A4C86428BAE9E5E /* BiliClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BiliClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0A6B81F9A4C86428BAE9E5E /* BiliClient.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BiliClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6F7A4FB085D41355A89CA7F /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		BC87753681E1F2054747CC0A /* SideDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideDrawer.swift; sourceTree = "<group>"; };
 		D48ABBACC750AD09E5637245 /* BiliService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiliService.swift; sourceTree = "<group>"; };
@@ -252,6 +252,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
 			};
 			buildConfigurationList = 6AD73FEA7AA69F407777A401 /* Build configuration list for PBXProject "BiliClient" */;
 			developmentRegion = "zh-Hans";
@@ -375,7 +377,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = HDDN84K629;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BiliClient/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -385,8 +386,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.makoto.biliclient.BiliClient;
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -463,7 +462,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = HDDN84K629;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = BiliClient/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -473,8 +471,6 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.makoto.biliclient.BiliClient;
 				SDKROOT = iphoneos;
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
