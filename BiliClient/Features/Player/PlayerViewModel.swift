@@ -76,9 +76,22 @@ final class PlayerViewModel {
 
     @MainActor
     func loadInitial() async {
+        configureAudioSession()
         setupEndObserver()
         setupTimeObserver()
         await loadEpisode(index: currentEpisodeIndex)
+    }
+
+    /// 配置音频会话为 .playback，使视频在真机静音拨片开启时也能出声。
+    /// 默认的 .soloAmbient 会跟随静音开关，导致无声。
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .moviePlayback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            // 配置失败不影响画面播放，仅记录。
+            print("AVAudioSession 配置失败：\(error.localizedDescription)")
+        }
     }
 
     /// 切换到指定集（多独立视频课程）。
@@ -147,6 +160,8 @@ final class PlayerViewModel {
             self.timeObserver = nil
         }
         NotificationCenter.default.removeObserver(self)
+        // 退出播放页时释放音频会话，交还给系统。
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     // MARK: - 内部
